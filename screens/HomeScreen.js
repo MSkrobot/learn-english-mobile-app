@@ -1,16 +1,19 @@
+// src/components/HomeScreen.js
+
 import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import TranslationInput from '../components/TranslationInput';
+import { Text, View, StyleSheet } from 'react-native';
 import { initializeDatabase } from '../database/db';
+
+
 
 export default function HomeScreen() {
   useEffect(() => {
-    initializeDatabase();  // Inicjalizacja bazy danych na ekranie głównym
+    initializeDatabase();
   }, []);
 
   return (
     <View style={styles.container}>
-      <TranslationInput />
+      <Text>Heej</Text>
     </View>
   );
 }
