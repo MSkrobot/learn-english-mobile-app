@@ -1,19 +1,18 @@
 // src/components/HomeScreen.js
 
 import React, { useEffect } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import TranslationInput from '../components/TranslationInput';
 import { initializeDatabase } from '../database/db';
-
-
 
 export default function HomeScreen() {
   useEffect(() => {
-    initializeDatabase();
+    initializeDatabase();  // Inicjalizacja bazy danych na ekranie głównym
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text>Heej</Text>
+      <TranslationInput />
     </View>
   );
 }
@@ -25,3 +24,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+

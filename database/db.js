@@ -39,7 +39,9 @@ export const initializeDatabase = async () => {
   } catch (error) {
     console.log('Error initializing database:', error);
   }
-
+  await db.execAsync(`
+    INSERT INTO translations (english_word, polish_translation) VALUES ('cow', 'krowa');
+`);
   await printAllTranslations();
 };
 
