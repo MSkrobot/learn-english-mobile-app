@@ -51,3 +51,12 @@ export const removeNullTranslations = async (db) => {
     console.log('Error removing null translations:', error);
   }
 };
+
+export const deleteAllTranslations = async (db) => {
+  try {
+    await db.runAsync('DELETE FROM translations');  // This deletes all records from the table
+    console.log('All translations have been deleted from the database.');
+  } catch (error) {
+    console.error('Error deleting all translations:', error);
+  }
+};

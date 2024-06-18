@@ -36,6 +36,7 @@ const addFileToDataBase = async (outputFile, db) => {
   };
 
 
+//Przy dodawaniu nowych plikow wejsciowych do bazy tutaj dodawac nowe case'y
 const getAsset = (inputFile) => {
     switch (inputFile) {
         case 'input.txt':
