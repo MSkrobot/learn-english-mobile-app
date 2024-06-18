@@ -32,6 +32,7 @@ export const getTranslation = async (word, db) => {
 
 export const printAllTranslations = async (db) => {
   try {
+    console.log('Printing all translations: ');
     const allRows = await db.getAllAsync('SELECT english_word, polish_translation FROM translations');
     allRows.forEach(row => {
       if (row.english_word && row.polish_translation) {

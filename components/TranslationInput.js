@@ -12,7 +12,7 @@ export default function TranslationInput() {
 
   const handleTranslate = async () => {
     const db = await openDatabase();  
-    const result = await getTranslation(word, db);
+    const result = await getTranslation(word.toLowerCase(), db);
     if (result) {
       setTranslation(result);
     } else {
