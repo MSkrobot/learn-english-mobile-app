@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import TranslationInput from '../components/TranslationInput';
-import { initializeDatabase } from '../database/db';
+import { initializeDatabase } from '../database/prepare';
 
 export default function HomeScreen() {
   useEffect(() => {

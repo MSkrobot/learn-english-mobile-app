@@ -1,53 +1,24 @@
 // src/database/db.js
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { processTextFile } from '../utils/fileUtils';
-import * as FileSystem from 'expo-file-system';
-import { Asset } from 'expo-asset';
-import { openDatabase } from './open';
-
-const saveTextFile = async () => {
-  const filePath = FileSystem.documentDirectory + 'example.txt';
-  const asset = Asset.fromModule(require('../assets/input.txt'));
-  await asset.downloadAsync(); // Ensure the asset is downloaded
-
-  const content = await FileSystem.readAsStringAsync(asset.localUri);
-
+export const addOrUpdateTranslation = async (englishWord, polishTranslation, db) => {
   try {
-    await FileSystem.writeAsStringAsync(filePath, content);
-    console.log("Plik zapisany pomyślnie:", filePath);
-  } catch (error) {
-    console.error("Błąd zapisywania pliku:", error);
-  }
-};
-
-const handleProcessFile = async (db) => {
-  const filePath = FileSystem.documentDirectory + 'example.txt';
-  await processTextFile(filePath, db);
-};
-
-export const initializeDatabase = async () => {
-  try {
-    const db = await openDatabase();
-    const isInitialized = await AsyncStorage.getItem('db_initialized');
-    if (isInitialized !== 'true') {
-      await db.execAsync(`
-        PRAGMA journal_mode = WAL;
-        CREATE TABLE IF NOT EXISTS translations (id INTEGER PRIMARY KEY AUTOINCREMENT, english_word TEXT UNIQUE, polish_translation TEXT);
-      `);
-      console.log('Database initialized');
-      await AsyncStorage.setItem('db_initialized', 'true');
-      await saveTextFile();
-      await handleProcessFile(db);
+    if (!englishWord || !polishTranslation) {
+      return;
     }
-    //await removeNullTranslations(db);
-    await saveTextFile();
-    await handleProcessFile(db);
-    await printAllTranslations(db);
+
+    const existingTranslation = await getTranslation(englishWord, db);
+    if (existingTranslation) {
+      await db.runAsync('UPDATE translations SET polish_translation = ? WHERE english_word = ?', [polishTranslation, englishWord]);
+      console.log(`Translation updated for ${englishWord}: ${polishTranslation}`);
+    } else {
+      await db.runAsync('INSERT INTO translations (english_word, polish_translation) VALUES (?, ?)', [englishWord, polishTranslation]);
+      console.log(`Translation added for ${englishWord}: ${polishTranslation}`);
+    }
   } catch (error) {
-    console.log('Error initializing database:', error);
+    console.error('Error adding or updating translation:', error);
   }
 };
+
 
 export const getTranslation = async (word, db) => {
   try {
