@@ -3,11 +3,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { processTextFile } from '../utils/fileUtils';
 import * as FileSystem from 'expo-file-system';
+import { Asset } from 'expo-asset';
 import { openDatabase } from './open';
 
 const saveTextFile = async () => {
   const filePath = FileSystem.documentDirectory + 'example.txt';
-  const content = "Random text to be translated cat dog gay cow";
+  const asset = Asset.fromModule(require('../assets/input.txt'));
+  await asset.downloadAsync(); // Ensure the asset is downloaded
+
+  const content = await FileSystem.readAsStringAsync(asset.localUri);
 
   try {
     await FileSystem.writeAsStringAsync(filePath, content);
@@ -37,6 +41,8 @@ export const initializeDatabase = async () => {
       await handleProcessFile(db);
     }
     //await removeNullTranslations(db);
+    await saveTextFile();
+    await handleProcessFile(db);
     await printAllTranslations(db);
   } catch (error) {
     console.log('Error initializing database:', error);
