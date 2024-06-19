@@ -1,2 +1,2 @@
 [TO_DO]
-W origin jest wersja z dodanym API, jednak nowe slowa nie sa dodawane, w main jest stara wersja w ktorej dzialaja dodawania slow - porownac i ogarnac ocb
+w branchu new-way, dodac teraz obsluge wielu tekstow np. 3, a nastepnie uczyc sie do egzaminow :/, a nastepnie dodac mozliwosc klikania w tekst wyswietlony na ekranie, a nastepnie ustylizowac to, a nastepnie przetestowac i voila
