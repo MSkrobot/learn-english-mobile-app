@@ -1,18 +1,26 @@
 // src/components/HomeScreen.js
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import TranslationInput from '../components/TranslationInput';
-import { initializeDatabase } from '../database/prepare';
+import { openDatabase } from '../database/open';
+
 
 export default function HomeScreen() {
+  const [db, setDb] = useState(null);
+
   useEffect(() => {
-    initializeDatabase();  // Inicjalizacja bazy danych na ekranie głównym
+    const initializeDatabase = async () => {
+      const database = await openDatabase();
+      setDb(database);
+    };
+
+    initializeDatabase();
   }, []);
 
   return (
     <View style={styles.container}>
-      <TranslationInput />
+      {db && <TranslationInput db={db} />}
     </View>
   );
 }

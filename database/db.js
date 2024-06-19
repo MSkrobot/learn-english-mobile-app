@@ -1,5 +1,3 @@
-// src/database/db.js
-
 export const addOrUpdateTranslation = async (englishWord, polishTranslation, db) => {
   try {
     if (!englishWord || !polishTranslation) {
@@ -19,6 +17,20 @@ export const addOrUpdateTranslation = async (englishWord, polishTranslation, db)
   }
 };
 
+
+export const printTables = async (db) => {
+  try {
+    const tables = await db.getAllAsync("SELECT name FROM sqlite_master WHERE type='table'");
+    console.log('Tables in the database:', tables);
+    for (const table of tables) {
+      console.log(`Structure of table ${table.name}:`);
+      const structure = await db.getAllAsync(`PRAGMA table_info(${table.name})`);
+      console.log(structure);
+    }
+  } catch (error) {
+    console.error('Error fetching tables:', error);
+  }
+};
 
 export const getTranslation = async (word, db) => {
   try {
