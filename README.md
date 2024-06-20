@@ -1,4 +1,5 @@
 [TO_DO]
+podzielic ten projekt na 2 w jednym, osobny mikroserwis do przygotowania bazy danych z przetlumaczonymi slowami i appka uzywajaca tej bazy danych
 uporzadkowac wszystkie branche i zlaczyc go w 1.
 w branchu new-way, dodac teraz obsluge wielu tekstow np. 3,
 a nastepnie uczyc sie do egzaminow :/,
