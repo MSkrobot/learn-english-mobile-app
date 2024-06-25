@@ -1,47 +1,63 @@
-import * as SQLite from 'expo-sqlite';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// src/database/db.js
 
-export const initializeDatabase = async () => {
-    try {
-        const db = await SQLite.openDatabaseAsync('translations.db');
-        const isInitialized = await AsyncStorage.getItem('db_initialized');
-        if (isInitialized !== 'true') {
-            await db.execAsync(`
-                PRAGMA journal_mode = WAL;
-                CREATE TABLE IF NOT EXISTS translations (id INTEGER PRIMARY KEY AUTOINCREMENT, english_word TEXT UNIQUE, polish_translation TEXT);
-            `);
-            console.log('Database initialized');
-            await AsyncStorage.setItem('db_initialized', 'true');
-            await addSampleTranslations(db);
-        }
-    } catch (error) {
-        console.log('Error initializing database:', error);
+export const addOrUpdateTranslation = async (englishWord, polishTranslation, db) => {
+  try {
+    if (!englishWord || !polishTranslation) {
+      return;
     }
+
+    const existingTranslation = await getTranslation(englishWord, db);
+    if (existingTranslation) {
+      await db.runAsync('UPDATE translations SET polish_translation = ? WHERE english_word = ?', [polishTranslation, englishWord]);
+      console.log(`Translation updated for ${englishWord}: ${polishTranslation}`);
+    } else {
+      await db.runAsync('INSERT INTO translations (english_word, polish_translation) VALUES (?, ?)', [englishWord, polishTranslation]);
+      console.log(`Translation added for ${englishWord}: ${polishTranslation}`);
+    }
+  } catch (error) {
+    console.error('Error adding or updating translation:', error);
+  }
 };
 
-const addSampleTranslations = async (db) => {
-    try {
-        await db.execAsync(`
-            INSERT INTO translations (english_word, polish_translation) VALUES ('dog', 'pies'), ('cat', 'kot'), ('cock', 'kogut');
-        `);
-        console.log('Sample translations added');
-    } catch (error) {
-        console.error('Error adding sample translations:', error);
-    }
+
+export const getTranslation = async (word, db) => {
+  try {
+    const row = await db.getFirstAsync('SELECT polish_translation FROM translations WHERE english_word = ?', [word]);
+    return row ? row.polish_translation : null;
+  } catch (error) {
+    console.log('Error fetching translation:', error);
+    return null;
+  }
 };
 
-const openDatabase = async () => {
-    return await SQLite.openDatabaseAsync('translations.db');
+export const printAllTranslations = async (db) => {
+  try {
+    console.log('Printing all translations: ');
+    const allRows = await db.getAllAsync('SELECT english_word, polish_translation FROM translations');
+    allRows.forEach(row => {
+      if (row.english_word && row.polish_translation) {
+        console.log(`${row.english_word}: ${row.polish_translation}`);
+      }
+    });
+  } catch (error) {
+    console.log('Error printing translations:', error);
+  }
 };
 
-// Eksport funkcji getTranslation
-export const getTranslation = async (word) => {
-    try {
-        const db = await openDatabase();
-        const row = await db.getFirstAsync('SELECT polish_translation FROM translations WHERE english_word = ?', [word]);
-        return row ? row.polish_translation : null;
-    } catch (error) {
-        console.log('Error fetching translation:', error);
-        return null;
-    }
+export const removeNullTranslations = async (db) => {
+  try {
+    await db.runAsync('DELETE FROM translations WHERE english_word IS NULL OR polish_translation IS NULL');
+    console.log('Removed records with NULL values');
+  } catch (error) {
+    console.log('Error removing null translations:', error);
+  }
+};
+
+export const deleteAllTranslations = async (db) => {
+  try {
+    await db.runAsync('DELETE FROM translations');  // This deletes all records from the table
+    console.log('All translations have been deleted from the database.');
+  } catch (error) {
+    console.error('Error deleting all translations:', error);
+  }
 };
