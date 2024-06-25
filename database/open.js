@@ -4,21 +4,24 @@ import { Asset } from 'expo-asset';
 
 const databaseName = 'translationsLocal.db';
 const databaseFilePath = `${FileSystem.documentDirectory}${databaseName}`;
-const csvFileName = 'translations.csv';
-const csvFilePath = `${FileSystem.documentDirectory}${csvFileName}`;
 
-const createFile = async (inputFile, outputFile) => {
+const createFile = async (table, outputFile) => {
   const filePath = FileSystem.documentDirectory + outputFile;
-  const asset = Asset.fromModule(require(`../assets/translations.csv`));
+  let asset;
+  switch (table){
+    case 'because_I_could_not_stop_for_death': asset = Asset.fromModule(require(`../assets/because_I_could_not_stop_for_death.csv`)); break;
+    case 'translations': asset = Asset.fromModule(require(`../assets/translations.csv`)); break;
+  }
+  console.log(`Asset: ${asset}`);
   await asset.downloadAsync(); // Ensure the asset is downloaded
 
   const content = await FileSystem.readAsStringAsync(asset.localUri);
 
   try {
     await FileSystem.writeAsStringAsync(filePath, content);
-    console.log("Plik zapisany pomyślnie:", filePath);
+    console.log("File saved successfully:", filePath);
   } catch (error) {
-    console.error("Błąd zapisywania pliku:", error);
+    console.error("Error saving file:", error);
   }
 };
 
@@ -47,22 +50,22 @@ const parseCSV = (csvContent) => {
   return result;
 };
 
-const populateDatabase = async (db, parsedCsv) => {
+const populateDatabase = async (db, parsedCsv, tableName) => {
   try {
     const insertPromises = parsedCsv.map(row => {
       const { english_word, polish_translation } = row;
-      return db.runAsync('INSERT INTO translations (english_word, polish_translation) VALUES (?, ?)', [english_word, polish_translation])
-        .catch(error => {
-          if (error.message.includes('UNIQUE constraint failed')) {
-            console.log(`Skipping duplicate entry for: ${english_word}`);
-          } else {
-            throw error;
-          }
-        });
+      return db.runAsync(`INSERT INTO ${tableName} (english_word, polish_translation) VALUES (?, ?)`, [english_word, polish_translation])
+          .catch(error => {
+            if (error.message.includes('UNIQUE constraint failed')) {
+              console.log(`Skipping duplicate entry for: ${english_word}`);
+            } else {
+              throw error;
+            }
+          });
     });
 
     await Promise.all(insertPromises);
-    console.log('Data inserted into translations table');
+    console.log(`Data inserted into ${tableName} table`);
   } catch (error) {
     console.error('Error populating database:', error);
     throw error;
@@ -86,10 +89,9 @@ export const deleteDatabase = async () => {
   }
 };
 
-//Nie uzywac tej funkcji!!
-const checkTableExists = async (db, tableName) => {
+const checkTableExists = async (db, table) => {
   try {
-    const result = await db.getAllAsync(`SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`);
+    const result = await db.getAllAsync(`SELECT name FROM sqlite_master WHERE type='table' AND name='${table}'`);
     return result.length > 0;
   } catch (error) {
     console.error('Error checking table existence:', error);
@@ -97,30 +99,29 @@ const checkTableExists = async (db, tableName) => {
   }
 };
 
+export const  openTable = async (db, table) => {
+  const tableExists = await checkTableExists(db, table);
+
+  if (!tableExists) {
+    console.log(`Table ${table} does not exist, creating...`);
+    await createFile(table, `${table}.csv`);
+
+    const csvData = await FileSystem.readAsStringAsync(`${FileSystem.documentDirectory}${table}.csv`);
+    const parsedCsv = parseCSV(csvData);
+
+    await db.execAsync(`
+          PRAGMA journal_mode = WAL;
+          CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY AUTOINCREMENT, english_word TEXT UNIQUE, polish_translation TEXT);
+        `);
+
+    await populateDatabase(db, parsedCsv, table);
+  }
+};
+
 export const openDatabase = async () => {
   try {
-    const db = await SQLite.openDatabaseAsync(databaseName);
-    const tableExists = await checkTableExists(db, 'translations');
-
-    if (!tableExists) {
-      console.log('Table does not exists so - Creating database from CSV');
-      await createFile(csvFileName, csvFileName);
-
-      const csvData = await FileSystem.readAsStringAsync(csvFilePath);
-      const parsedCsv = parseCSV(csvData);
-
-      const db = await SQLite.openDatabaseAsync(databaseName);
-      console.log('Database opened');
-
-      await db.execAsync(`
-        PRAGMA journal_mode = WAL;
-        CREATE TABLE IF NOT EXISTS translations (id INTEGER PRIMARY KEY AUTOINCREMENT, english_word TEXT UNIQUE, polish_translation TEXT);
-      `);
-
-      populateDatabase(db, parsedCsv);
-      return db;
-    }
-    console.log('Table does exist');
+    const db = SQLite.openDatabaseAsync(databaseName);
+    console.log('Database opened');
     return db;
   } catch (error) {
     console.error('Error opening database:', error);

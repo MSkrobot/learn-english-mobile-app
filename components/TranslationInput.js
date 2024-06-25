@@ -1,16 +1,13 @@
-// src/components/TranslationInput.js
-
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import { getTranslation } from '../database/db';
 
-
-export default function TranslationInput({ db }) {
+export default function TranslationInput({ db, tableName }) {
   const [word, setWord] = useState('');
   const [translation, setTranslation] = useState('');
 
   const handleTranslate = async () => {
-    const result = await getTranslation(word.toLowerCase(), db);
+    const result = await getTranslation(word.toLowerCase(), db, tableName);
     if (result) {
       setTranslation(result);
     } else {
@@ -19,18 +16,17 @@ export default function TranslationInput({ db }) {
     }
   };
 
-  
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        value={word}
-        onChangeText={setWord}
-        placeholder="Enter an English word"
-      />
-      <Button title="Translate" onPress={handleTranslate} />
-      <Text style={styles.translation}>{translation}</Text>
-    </View>
+      <View style={styles.container}>
+        <TextInput
+            style={styles.input}
+            value={word}
+            onChangeText={setWord}
+            placeholder="Enter an English word"
+        />
+        <Button title="Translate" onPress={handleTranslate} />
+        <Text style={styles.translation}>{translation}</Text>
+      </View>
   );
 }
 
