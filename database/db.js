@@ -1,17 +1,15 @@
-// src/database/db.js
-
-export const addOrUpdateTranslation = async (englishWord, polishTranslation, db) => {
+export const addOrUpdateTranslation = async (englishWord, polishTranslation, db, tableName) => {
   try {
     if (!englishWord || !polishTranslation) {
       return;
     }
 
-    const existingTranslation = await getTranslation(englishWord, db);
+    const existingTranslation = await getTranslation(englishWord, db, tableName);
     if (existingTranslation) {
-      await db.runAsync('UPDATE translations SET polish_translation = ? WHERE english_word = ?', [polishTranslation, englishWord]);
+      await db.runAsync(`UPDATE ${tableName} SET polish_translation = ? WHERE english_word = ?`, [polishTranslation, englishWord]);
       console.log(`Translation updated for ${englishWord}: ${polishTranslation}`);
     } else {
-      await db.runAsync('INSERT INTO translations (english_word, polish_translation) VALUES (?, ?)', [englishWord, polishTranslation]);
+      await db.runAsync(`INSERT INTO ${tableName} (english_word, polish_translation) VALUES (?, ?)`, [englishWord, polishTranslation]);
       console.log(`Translation added for ${englishWord}: ${polishTranslation}`);
     }
   } catch (error) {
@@ -19,10 +17,9 @@ export const addOrUpdateTranslation = async (englishWord, polishTranslation, db)
   }
 };
 
-
-export const getTranslation = async (word, db) => {
+export const getTranslation = async (word, db, tableName) => {
   try {
-    const row = await db.getFirstAsync('SELECT polish_translation FROM translations WHERE english_word = ?', [word]);
+    const row = await db.getFirstAsync(`SELECT polish_translation FROM ${tableName} WHERE english_word = ?`, [word]);
     return row ? row.polish_translation : null;
   } catch (error) {
     console.log('Error fetching translation:', error);
@@ -30,10 +27,24 @@ export const getTranslation = async (word, db) => {
   }
 };
 
-export const printAllTranslations = async (db) => {
+export const printTables = async (db) => {
   try {
-    console.log('Printing all translations: ');
-    const allRows = await db.getAllAsync('SELECT english_word, polish_translation FROM translations');
+    const tables = await db.getAllAsync(`SELECT name FROM sqlite_master WHERE type='table'`);
+    console.log('Tables in the database:', tables);
+    for (const table of tables) {
+      console.log(`Structure of table ${table.name}:`);
+      const structure = await db.getAllAsync(`PRAGMA table_info(${table.name})`);
+      console.log(structure);
+    }
+  } catch (error) {
+    console.error('Error fetching tables:', error);
+  }
+};
+
+export const printAllTranslations = async (db, tableName) => {
+  try {
+    console.log(`Printing all translations from ${tableName}:`);
+    const allRows = await db.getAllAsync(`SELECT english_word, polish_translation FROM ${tableName}`);
     allRows.forEach(row => {
       if (row.english_word && row.polish_translation) {
         console.log(`${row.english_word}: ${row.polish_translation}`);
@@ -44,19 +55,19 @@ export const printAllTranslations = async (db) => {
   }
 };
 
-export const removeNullTranslations = async (db) => {
+export const removeNullTranslations = async (db, tableName) => {
   try {
-    await db.runAsync('DELETE FROM translations WHERE english_word IS NULL OR polish_translation IS NULL');
+    await db.runAsync(`DELETE FROM ${tableName} WHERE english_word IS NULL OR polish_translation IS NULL`);
     console.log('Removed records with NULL values');
   } catch (error) {
     console.log('Error removing null translations:', error);
   }
 };
 
-export const deleteAllTranslations = async (db) => {
+export const deleteAllTranslations = async (db, tableName) => {
   try {
-    await db.runAsync('DELETE FROM translations');  // This deletes all records from the table
-    console.log('All translations have been deleted from the database.');
+    await db.runAsync(`DELETE FROM ${tableName}`);  // This deletes all records from the table
+    console.log(`All translations have been deleted from the ${tableName} table.`);
   } catch (error) {
     console.error('Error deleting all translations:', error);
   }
