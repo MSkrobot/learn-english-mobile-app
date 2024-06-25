@@ -14,7 +14,7 @@ const chooseAsset = async (table) => {
 
 const createFile = async (table, outputFile) => {
   const filePath = FileSystem.documentDirectory + outputFile;
-  let asset = await chooseAsset(table);
+  const asset = await chooseAsset(table);
   console.log(`Asset: ${asset}`);
   await asset.downloadAsync(); // Ensure the asset is downloaded
 
@@ -102,7 +102,7 @@ const checkTableExists = async (db, table) => {
   }
 };
 
-export const  openTable = async (db, table) => {
+export const openTable = async (db, table) => {
   const tableExists = await checkTableExists(db, table);
 
   if (!tableExists) {
