@@ -2,7 +2,7 @@
   "expo": {
     "assetBundlePatterns": [
       "assets/input.txt",
-      "assets/because_I_could_not_stop_for_death.txt"
+      "assets/because_i_could_not_stop_for_death.txt"
     ],
     "name": "LearnEnglishApp",
     "slug": "LearnEnglishApp",

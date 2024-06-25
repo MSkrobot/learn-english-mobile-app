@@ -5,13 +5,16 @@ import { Asset } from 'expo-asset';
 const databaseName = 'translationsLocal.db';
 const databaseFilePath = `${FileSystem.documentDirectory}${databaseName}`;
 
+const chooseAsset = async (table) => {
+  switch (table){
+    case 'because_i_could_not_stop_for_death': return Asset.fromModule(require(`../assets/because_i_could_not_stop_for_death.csv`));
+    case 'translations': return Asset.fromModule(require(`../assets/translations.csv`));
+  }
+};
+
 const createFile = async (table, outputFile) => {
   const filePath = FileSystem.documentDirectory + outputFile;
-  let asset;
-  switch (table){
-    case 'because_I_could_not_stop_for_death': asset = Asset.fromModule(require(`../assets/because_I_could_not_stop_for_death.csv`)); break;
-    case 'translations': asset = Asset.fromModule(require(`../assets/translations.csv`)); break;
-  }
+  let asset = await chooseAsset(table);
   console.log(`Asset: ${asset}`);
   await asset.downloadAsync(); // Ensure the asset is downloaded
 
