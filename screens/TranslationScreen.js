@@ -1,7 +1,10 @@
+// src/screens/TranslationScreen.js
+
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
+import { View, Button } from 'react-native';
 import TranslationInput from '../components/TranslationInput';
 import { openDatabase, openTable } from '../database/open';
+import { commonStyles } from '../styles/styles';
 
 export default function TranslationScreen({ route, navigation }) {
     const { tableName } = route.params;
@@ -20,17 +23,9 @@ export default function TranslationScreen({ route, navigation }) {
     }, [tableName]);
 
     return (
-        <View style={styles.container}>
+        <View style={commonStyles.container}>
             <Button title="Go Back" onPress={() => navigation.goBack()} />
             {db && isTableReady && <TranslationInput db={db} tableName={tableName} />}
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});
