@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
 import BookScreen from '../screens/BookScreen';
+import TextScreen from '../screens/TextScreen';
 import TranslationScreen from '../screens/TranslationScreen';
 
 const Stack = createStackNavigator();
@@ -13,7 +14,7 @@ export default function AppNavigator() {
             <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="Book" component={BookScreen} />
-                <Stack.Screen name="Text" component={BookScreen} />
+                <Stack.Screen name="Text" component={TextScreen} />
                 <Stack.Screen name="Translation" component={TranslationScreen} />
             </Stack.Navigator>
         </NavigationContainer>

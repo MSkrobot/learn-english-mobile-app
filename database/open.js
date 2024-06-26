@@ -9,6 +9,8 @@ const chooseAsset = async (table) => {
   switch (table){
     case 'because_i_could_not_stop_for_death': return Asset.fromModule(require(`../assets/because_i_could_not_stop_for_death.csv`));
     case 'translations': return Asset.fromModule(require(`../assets/translations.csv`));
+    case 'middle_passage': return Asset.fromModule(require(`../assets/middle_passage.csv`));
+    case 'casey_at_the_bat': return Asset.fromModule(require(`../assets/casey_at_the_bat.csv`));
   }
 };
 
