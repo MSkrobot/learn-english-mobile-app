@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f3ad324b-2a9e-4314-80eb-e700cfc43cae" name="Changes" comment="Added nearly working handling of multiple texts">
-      <change afterPath="$PROJECT_DIR$/styles/styles.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/BookScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/BookScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/HomeScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/HomeScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/TranslationScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/TranslationScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/navigation/AppNavigator.js" beforeDir="false" afterPath="$PROJECT_DIR$/navigation/AppNavigator.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +81,7 @@
       <workItem from="1719187755130" duration="3021000" />
       <workItem from="1719273770605" duration="6008000" />
       <workItem from="1719355934174" duration="309000" />
-      <workItem from="1719356251447" duration="5931000" />
+      <workItem from="1719356251447" duration="6493000" />
     </task>
     <task id="LOCAL-00001" summary="added new asset">
       <option name="closed" value="true" />
