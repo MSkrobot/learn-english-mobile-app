@@ -12,8 +12,9 @@ export default function HomeScreen() {
   return (
       <View style={commonStyles.container}>
         <ScrollView contentContainerStyle={commonStyles.scrollViewContent}>
-          <CustomButton label="Choose Book" onPress={() => navigation.navigate('Book')} />
-          <CustomButton label="Learn" onPress={() => {}} />
+            <CustomButton label="Choose Book" onPress={() => navigation.navigate('Book')} />
+            <CustomButton label="Choose Poem" onPress={() => navigation.navigate('Text')} />
+            <CustomButton label="Learn" onPress={() => {}} />
         </ScrollView>
       </View>
   );

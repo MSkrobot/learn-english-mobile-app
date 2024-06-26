@@ -7,7 +7,7 @@ export const commonStyles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'top',
-        paddingVertical: 16,
+        paddingVertical: 70,
         backgroundColor: '#f0f0f0',
     },
     scrollViewContent: {

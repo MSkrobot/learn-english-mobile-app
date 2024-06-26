@@ -13,6 +13,7 @@ export default function AppNavigator() {
             <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="Book" component={BookScreen} />
+                <Stack.Screen name="Text" component={BookScreen} />
                 <Stack.Screen name="Translation" component={TranslationScreen} />
             </Stack.Navigator>
         </NavigationContainer>
