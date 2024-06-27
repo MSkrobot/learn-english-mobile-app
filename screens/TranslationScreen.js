@@ -10,12 +10,14 @@ export default function TranslationScreen({ route, navigation }) {
     const { tableName } = route.params;
     const [db, setDb] = useState(null);
     const [isTableReady, setIsTableReady] = useState(false);
+    const [textContent, setTextContent] = useState('');
 
     useEffect(() => {
         const initializeDatabase = async () => {
             const database = await openDatabase();
-            await openTable(database, tableName);
+            const text = await openTable(database, tableName);
             setDb(database);
+            setTextContent(text);
             setIsTableReady(true);
         };
 
@@ -25,7 +27,7 @@ export default function TranslationScreen({ route, navigation }) {
     return (
         <View style={commonStyles.container}>
             <Button title="Go Back" onPress={() => navigation.goBack()} />
-            {db && isTableReady && <TranslationInput db={db} tableName={tableName} />}
+            {db && isTableReady && <TranslationInput db={db} tableName={tableName} textContent={textContent} />}
         </View>
     );
 }

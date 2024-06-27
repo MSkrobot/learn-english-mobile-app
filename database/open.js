@@ -5,19 +5,32 @@ import { Asset } from 'expo-asset';
 const databaseName = 'translationsLocal.db';
 const databaseFilePath = `${FileSystem.documentDirectory}${databaseName}`;
 
-const chooseAsset = async (table) => {
-  switch (table){
-    case 'because_i_could_not_stop_for_death': return Asset.fromModule(require(`../assets/because_i_could_not_stop_for_death.csv`));
-    case 'translations': return Asset.fromModule(require(`../assets/translations.csv`));
-    case 'middle_passage': return Asset.fromModule(require(`../assets/middle_passage.csv`));
-    case 'casey_at_the_bat': return Asset.fromModule(require(`../assets/casey_at_the_bat.csv`));
+const chooseAsset = async (table, type) => {
+  switch (table) {
+    case 'because_i_could_not_stop_for_death':
+      return type === 'csv'
+          ? Asset.fromModule(require('../assets/because_i_could_not_stop_for_death.csv'))
+          : Asset.fromModule(require('../assets/because_i_could_not_stop_for_death.txt'));
+    case 'translations':
+      return type === 'csv'
+          ? Asset.fromModule(require('../assets/translations.csv'))
+          : Asset.fromModule(require('../assets/translations.txt'));
+    case 'middle_passage':
+      return type === 'csv'
+          ? Asset.fromModule(require('../assets/middle_passage.csv'))
+          : Asset.fromModule(require('../assets/middle_passage.txt'));
+    case 'casey_at_the_bat':
+      return type === 'csv'
+          ? Asset.fromModule(require('../assets/casey_at_the_bat.csv'))
+          : Asset.fromModule(require('../assets/casey_at_the_bat.txt'));
+    default:
+      throw new Error(`Unknown table: ${table}`);
   }
 };
 
-const createFile = async (table, outputFile) => {
+const createFile = async (table, outputFile, type) => {
   const filePath = FileSystem.documentDirectory + outputFile;
-  const asset = await chooseAsset(table);
-  console.log(`Asset: ${asset}`);
+  const asset = await chooseAsset(table, type);
   await asset.downloadAsync(); // Ensure the asset is downloaded
 
   const content = await FileSystem.readAsStringAsync(asset.localUri);
@@ -31,19 +44,19 @@ const createFile = async (table, outputFile) => {
 };
 
 const parseCSV = (csvContent) => {
-  const lines = csvContent.split('\n').filter(line => line.trim().length > 0); // Filter out empty lines
+  const lines = csvContent.trim().split('\n').filter(line => line.trim().length > 0); // Filter out empty lines and trim
   const result = [];
-  const headers = lines[0].split(',');
+  const headers = lines[0].split(',').map(header => header.trim());
 
   for (let i = 1; i < lines.length; i++) {
-    const currentLine = lines[i].split(',');
+    const currentLine = lines[i].split(',').map(item => item.trim());
 
     // Ensure the current line has the same number of columns as the header
     if (currentLine.length === headers.length) {
       const obj = {};
 
       for (let j = 0; j < headers.length; j++) {
-        obj[headers[j].trim()] = currentLine[j].trim();
+        obj[headers[j]] = currentLine[j];
       }
 
       result.push(obj);
@@ -109,18 +122,29 @@ export const openTable = async (db, table) => {
 
   if (!tableExists) {
     console.log(`Table ${table} does not exist, creating...`);
-    await createFile(table, `${table}.csv`);
+    await createFile(table, `${table}.csv`, 'csv');
 
     const csvData = await FileSystem.readAsStringAsync(`${FileSystem.documentDirectory}${table}.csv`);
     const parsedCsv = parseCSV(csvData);
 
     await db.execAsync(`
-          PRAGMA journal_mode = WAL;
-          CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY AUTOINCREMENT, english_word TEXT UNIQUE, polish_translation TEXT);
-        `);
+      PRAGMA journal_mode = WAL;
+      CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY AUTOINCREMENT, english_word TEXT UNIQUE, polish_translation TEXT);
+    `);
 
     await populateDatabase(db, parsedCsv, table);
   }
+
+  // Check if the text file exists before creating it
+  const textFilePath = `${FileSystem.documentDirectory}${table}.txt`;
+  const textFileExists = await FileSystem.getInfoAsync(textFilePath);
+
+  if (!textFileExists.exists) {
+    await createFile(table, `${table}.txt`, 'txt');
+  }
+
+  const textContent = await FileSystem.readAsStringAsync(textFilePath);
+  return textContent;
 };
 
 export const openDatabase = async () => {

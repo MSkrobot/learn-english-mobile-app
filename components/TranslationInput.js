@@ -1,30 +1,42 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import React, { useState, useCallback, useMemo } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native';
 import { getTranslation } from '../database/db';
 
-export default function TranslationInput({ db, tableName }) {
-  const [word, setWord] = useState('');
+export default function TranslationInput({ db, tableName, textContent }) {
   const [translation, setTranslation] = useState('');
 
-  const handleTranslate = async () => {
-    const result = await getTranslation(word.toLowerCase(), db, tableName);
+  const cleanWord = (word) => {
+    return word.replace(/[^a-zA-Z]/g, '').toLowerCase();
+  };
+
+  const handleTranslate = useCallback(async (word) => {
+    const cleanedWord = cleanWord(word);
+    const result = await getTranslation(cleanedWord, db, tableName);
     if (result) {
       setTranslation(result);
     } else {
       console.log("No translation found.");
       setTranslation('No translation found.');
     }
-  };
+  }, [db, tableName]);
+
+  const words = useMemo(() => textContent.split(/\s+/), [textContent]);
+
+  const renderItem = ({ item }) => (
+      <TouchableOpacity onPress={() => handleTranslate(item)}>
+        <Text style={styles.word}>{item} </Text>
+      </TouchableOpacity>
+  );
 
   return (
       <View style={styles.container}>
-        <TextInput
-            style={styles.input}
-            value={word}
-            onChangeText={setWord}
-            placeholder="Enter an English word"
+        <FlatList
+            data={words}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.textContainer}
+            numColumns={1}  // Fixed single column
         />
-        <Button title="Translate" onPress={handleTranslate} />
         <Text style={styles.translation}>{translation}</Text>
       </View>
   );
@@ -32,16 +44,21 @@ export default function TranslationInput({ db, tableName }) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flex: 1,
+    padding: 10,  // Padding for the container
   },
-  input: {
-    height: 40,
-    marginVertical: 20,
-    borderWidth: 1,
-    padding: 10,
-    width: 200,
+  textContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  word: {
+    marginRight: 5,
+    marginBottom: 5,
+    fontSize: 16,
   },
   translation: {
     marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
