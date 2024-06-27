@@ -1,9 +1,10 @@
 [TO_DO]  
 v0.x.x  
-- dodać mozliwosc klikania w tekst wyswietlony na ekranie - v0.2.0  
-- dodać mozliwosc zapisywania slow ktorych sie nie zna z tekstu i nauki ich w formie fiszek - v0.3.0  
-- dodać obszerna baze danych z wieloma ksiazkami i krotszymi tekstami - v0.4.0  
-- dodać zakładke 'w trakcie czytania' do której będzie można dodać książki które się aktualnie czyta i usuwac z niej te ksiazki - v0.5.0  
+- dodać mozliwość klikania w tekst wyświetlony na ekranie - v0.2.0
+- dodać tablice słów często używanych takich jak np. the, he, a, is itp. -v0.2.1
+- dodać mozliwość zapisywania slow ktorych sie nie zna z tekstu i nauki ich w formie fiszek - v0.3.0  
+- dodać obszerną bazę danych z wieloma książkami i krótszymi tekstami - v0.4.0  
+- dodać zakładke 'w trakcie czytania' do której będzie można dodać książki które się aktualnie czyta i usuwać z niej te książki - v0.5.0  
 - dodać kategorie tekstów i wyszukiwanie ich według kategorii [dodac nowe tablice np. dla middle_passage dodac middle_passage-info zawierające nazwę autora i inne informację, a także tagi kategorii]  - v0.6.0  
 - dodać poziom językowy tekstu i wyszukiwanie go według poziomu [poziom dodac do tablicy -info] - v0.7.0  
 - dodać wyszukiwanie tekstów po nazwie i autorze - v0.8.0  
