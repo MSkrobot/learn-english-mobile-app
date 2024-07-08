@@ -1,7 +1,8 @@
 [TO_DO]  
 v0.x.x  
-- dodać mozliwość klikania w tekst wyświetlony na ekranie - v0.2.0
-- dodać tablice słów często używanych takich jak np. the, he, a, is itp. -v0.2.1
+- dodać mozliwość klikania w tekst wyświetlony na ekranie - v0.2.0 [DONE] 
+- podzielić dłuższe teksty na strony i wczytywać każdą stronę pojedyńczo - v0.2.1
+- dodać tablice słów często używanych takich jak np. the, he, a, is itp. -v0.2.2
 - dodać mozliwość zapisywania slow ktorych sie nie zna z tekstu i nauki ich w formie fiszek - v0.3.0  
 - dodać obszerną bazę danych z wieloma książkami i krótszymi tekstami - v0.4.0  
 - dodać zakładke 'w trakcie czytania' do której będzie można dodać książki które się aktualnie czyta i usuwać z niej te książki - v0.5.0  
