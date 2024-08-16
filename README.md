@@ -19,5 +19,6 @@ v0.x.x
 - rozwinac opcje fiszek o zaznaczanie na ile zna sie dane slówko w kategorii 1-3 i dostosowac częstotliwość wyswietlania sie słówka w zależności od wybranej opcji - v0.8.0  
 - znacząco poprawić jakość tłumaczeń [tylko jak?] - v0.9.0  
 - dodać synonimy do każdego przetłumaczonego słowa - v0.10.0  
-- pomyśleć nad dodaniem statystyk/osiągnięć - v0.11.0  
+- pomyśleć nad dodaniem statystyk/osiągnięć - v0.11.0
+- opcje tlumaczenia calych zdan
 - release 🦾  
